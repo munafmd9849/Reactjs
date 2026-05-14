@@ -1,47 +1,42 @@
-import { useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react";
 import { fetchProducts } from "../services/api";
-import Card from "../components/Card/Card";
+import ProductListingPage from "./ProductListingPage";
+import EcommerceProvider, { EcommerceContext } from "../providers/EcommerceProvider";
 
-export default function ProductPage(){
-    const [products, setProducts] = useState([]);
-    const [error,setError] = useState("")
-    const [loading, setLoading] = useState(false)
 
-    useEffect(()=>{
-        getProducts();
-    },[])
+export default function ProductPage() {
+  const {products,setProducts} = useContext(EcommerceContext)
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const getProducts = async ()=>{
-        try{
-        setLoading(true)
-        const data = await fetchProducts()
-        setProducts(data)
-        }
-        catch(error){
-            setError(error.message)
-        }
-        finally{
-            setLoading(false)
-        }
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const getProducts = async () => {
+    try {
+      setLoading(true);
+      const data = await fetchProducts();
+      setProducts(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
-    if(error){
-        return <h5>{error}</h5>
-    }
-    return (
-        <div>
+  };
+  if (error) {
+    return <h5>{error}</h5>;
+  }
+  return (
+    <div>
+       
         <h1>Product Page</h1>
         <form>
-                <input type="text" placeholder="Search Products..."/>
+          <input type="text" placeholder="Search Products..." />
         </form>
+        <ProductListingPage />
         {loading && <h1>Loading....</h1>}
-            <div className="card-container">
-                {products && products.map((product)=>{
-                    return (
-                        <Card product={product}/>
-                    )
-                })}
-            </div>
-        </div>
-    )
+            
+    </div>
+  );
 }
-
